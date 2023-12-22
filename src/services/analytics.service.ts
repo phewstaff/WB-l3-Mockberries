@@ -14,6 +14,8 @@ class AnalyticsService {
   async postProductAppearance(data: ProductData) {
     const isLog = data.log ? true : false;
 
+    console.log(data);
+
     const response = await fetch('/api/sendEvent', {
       method: 'POST',
       headers: {
@@ -22,7 +24,7 @@ class AnalyticsService {
       body: JSON.stringify({
         type: isLog ? 'viewCardPromo' : 'viewCard',
         payload: { data },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toLocaleString()
       })
     });
 
@@ -32,6 +34,10 @@ class AnalyticsService {
   }
 
   async productAppearanceEvent() {
+    const products = await this.getProducts();
+
+    if (!products) return;
+
     let observedProducts = new Set();
 
     const saveObservedProduct = (productId: string) => {
@@ -44,12 +50,12 @@ class AnalyticsService {
       return storedObservedProducts ? new Set(JSON.parse(storedObservedProducts)) : new Set();
     };
 
-    const products = await this.getProducts();
-
     const onEntry = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry: IntersectionObserverEntry) => {
         const productId = entry.target.id;
+        const productData = products.find((i) => `${i.id}` === productId);
         if (entry.isIntersecting && !observedProducts.has(productId)) {
+          this.postProductAppearance(productData!);
           saveObservedProduct(productId);
         }
       });
@@ -63,7 +69,6 @@ class AnalyticsService {
 
     for (const product of products) {
       const productElement = document.getElementById(`${product.id}`);
-      console.log(productElement);
       if (productElement && !observedProducts.has(product.id)) {
         observer.observe(productElement);
       }
