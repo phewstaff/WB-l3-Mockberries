@@ -32,6 +32,8 @@ export class ProductList {
       productComp.render();
       productComp.attach(this.view.root);
     });
+
     analyticsService.init();
+    analyticsService.postNavigateEvent();
   }
 }

@@ -14,23 +14,14 @@ class AnalyticsService {
   async postProductAppearance(data: ProductData) {
     const isLog = data.log ? true : false;
 
-    console.log(data);
-
-    const response = await fetch('/api/sendEvent', {
+    await fetch('/api/sendEvent', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify({
         type: isLog ? 'viewCardPromo' : 'viewCard',
         payload: { data },
         timestamp: new Date().toLocaleString()
       })
     });
-
-    if (!response.ok) {
-      console.error('Failed to send event data:', response.statusText);
-    }
   }
 
   async productAppearanceEvent() {
@@ -76,6 +67,40 @@ class AnalyticsService {
 
     // Load observed products from session storage
     observedProducts = loadObservedProducts();
+  }
+
+  async postNavigateEvent() {
+    const url = window.location.href;
+    await fetch('/api/sendEvent', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'route',
+        payload: url,
+        timestamp: new Date().toLocaleString()
+      })
+    });
+  }
+
+  async postAddToCartEvent(product: ProductData) {
+    await fetch('/api/sendEvent', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'addToCart',
+        payload: { product },
+        timestamp: new Date().toLocaleString()
+      })
+    });
+  }
+
+  async postOrderEvent(idList: string[]) {
+    await fetch('/api/sendEvent', {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'addToCart',
+        payload: idList,
+        timestamp: new Date().toLocaleString()
+      })
+    });
   }
 }
 

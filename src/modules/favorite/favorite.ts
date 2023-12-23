@@ -3,6 +3,7 @@ import { Component } from '../component';
 import { Product } from '../product/product';
 import html from './favorite.tpl.html';
 import { ProductData } from 'types';
+import { analyticsService } from '../../services/analytics.service';
 
 class Favorite extends Component {
   products!: ProductData[];
@@ -24,6 +25,8 @@ class Favorite extends Component {
       productComp.render();
       productComp.attach(this.view.favorites);
     });
+
+    analyticsService.postNavigateEvent();
   }
 }
 
