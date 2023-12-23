@@ -3,6 +3,8 @@ import html from './catalog.tpl.html';
 
 import { ProductList } from '../productList/productList';
 
+import { analyticsService } from '../../services/analytics.service';
+
 class Catalog extends Component {
   productList: ProductList;
 
@@ -17,6 +19,8 @@ class Catalog extends Component {
     const productsResp = await fetch('/api/getProducts');
     const products = await productsResp.json();
     this.productList.update(products);
+
+    analyticsService.postNavigateEvent();
   }
 }
 
