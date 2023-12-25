@@ -6,6 +6,7 @@ import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
 import { favoriteService } from '../../services/favorite.service';
 import { analyticsService } from '../../services/analytics.service';
+import { userService } from '../../services/user.service';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -22,7 +23,13 @@ class ProductDetail extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = Number(urlParams.get('id'));
 
-    const productResp = await fetch(`/api/getProduct?id=${productId}`);
+    await userService.init();
+
+    const productResp = await fetch(`/api/getProduct?id=${productId}`, {
+      headers: {
+        'x-userid': window.userId
+      }
+    });
     this.product = await productResp.json();
 
     if (!this.product) return;
@@ -46,13 +53,21 @@ class ProductDetail extends Component {
       this._setOffFav();
     }
 
-    fetch(`/api/getProductSecretKey?id=${id}`)
+    fetch(`/api/getProductSecretKey?id=${id}`, {
+      headers: {
+        'x-userid': window.userId
+      }
+    })
       .then((res) => res.json())
       .then((secretKey) => {
         this.view.secretKey.setAttribute('content', secretKey);
       });
 
-    fetch('/api/getPopularProducts')
+    fetch('/api/getPopularProducts', {
+      headers: {
+        'x-userid': window.userId
+      }
+    })
       .then((res) => res.json())
       .then((products) => {
         this.more.update(products);
