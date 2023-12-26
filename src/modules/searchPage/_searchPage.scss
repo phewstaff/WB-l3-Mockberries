@@ -1,0 +1,27 @@
+.searchHints {
+  display: flex;
+  justify-content: center;
+
+  &__hints {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  &__hint-container {
+    cursor: pointer;
+    border-radius: 8px;
+    background-color: #f6f6fad5;
+    padding: 6px 8px 10px 8px;
+  }
+
+  &__hint {
+    background: linear-gradient(90deg, #da15b8 4.93%, #8d06cc 100%);
+    color: transparent;
+    text-decoration: none;
+    -webkit-background-clip: text;
+  }
+
+  a:hover {
+    color: black;
+  }
+}
